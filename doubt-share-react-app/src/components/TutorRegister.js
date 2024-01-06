@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
+
 import {
     FormControl, Heading,
     FormLabel,
     Input,
     Select, ButtonGroup,
     Button,
-    Stack,
+    Stack, Link,
     VStack, Radio, RadioGroup, Checkbox,
 } from '@chakra-ui/react';
 
 const TutorRegister = () => {
+    const SERVER_URL = "http://localhost:3300";
+    const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -31,6 +36,11 @@ const TutorRegister = () => {
         setSubjectType((prevSelectedSubjects) => {
             if (prevSelectedSubjects.includes(selectedSubject)) {
                 // If already selected, remove it
+
+                const newArr = formData.subjectType.filter(sub => sub !== selectedSubject);
+
+                setFormData({ ...formData, subjectType: newArr })
+
                 return prevSelectedSubjects.filter(
                     (subject) => subject !== selectedSubject
                 );
@@ -38,19 +48,54 @@ const TutorRegister = () => {
                 // If not selected, add it
 
                 let data = formData.subjectType;
-                data.push(selectedSubject);
+                if (!data.includes(selectedSubject)) {
+                    data.push(selectedSubject);
 
-                setFormData({ ...formData, [subjectType]: data })
+                }
+
+                setFormData({ ...formData, subjectType: data })
                 return [...prevSelectedSubjects, selectedSubject];
             }
         });
+
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle form submission logic here
-        console.log('Form Data:', formData);
-        // You can send the data to the server or perform any other actions
+
+        try {
+            // Handle form submission logic here
+            console.log('Form Data:', formData);
+            const response = await fetch(`${SERVER_URL}/register/tutor`, {
+                method: 'POST',
+                mode: "cors",
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                const data = await response.json(); // Parse the JSON in the response
+                console.log('Success:', data);
+                alert(data.message);
+
+                setTimeout(() => {
+                    navigate("/tutor-login")
+                }, 3000);
+
+            } else {
+                const data = await response.json(); // Parse the JSON in the response
+                alert(data.message);
+                throw new Error(`HTTP error! Status: ${response.status}`);
+
+            }
+
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
+
     };
 
 
@@ -148,6 +193,12 @@ const TutorRegister = () => {
                 <Button type="submit" colorScheme="blue" mt={4}>
                     Submit
                 </Button>
+
+                <br />
+
+                <Link href="/tutor-login" color="blue.500" fontWeight="bold">
+                    Already have an account. Sign in here !!
+                </Link>
             </form>
         </VStack>
     )

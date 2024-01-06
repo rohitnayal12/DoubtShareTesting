@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     FormControl, Heading,
     FormLabel,
     Input,
     Select, ButtonGroup,
     Button,
-    Stack,
+    Stack, Link,
     VStack,
 } from '@chakra-ui/react';
 
 
+
+
 const Register = () => {
+
+    const SERVER_URL = "http://localhost:3300";
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         name: '',
@@ -25,11 +31,42 @@ const Register = () => {
         setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle form submission logic here
-        console.log('Form Data:', formData);
-        // You can send the data to the server or perform any other actions
+
+        try {
+            // Handle form submission logic here
+            console.log('Form Data:', formData);
+            const response = await fetch(`${SERVER_URL}/register/student`, {
+                method: 'POST',
+                mode: "cors",
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                const data = await response.json(); // Parse the JSON in the response
+                console.log('Success:', data);
+                alert(data.message);
+
+                setTimeout(() => {
+                    navigate("/student-login")
+                }, 3000);
+
+            } else {
+                const data = await response.json(); // Parse the JSON in the response
+                alert(data.message);
+                throw new Error(`HTTP error! Status: ${response.status}`);
+
+            }
+
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
+
     };
 
     return (
@@ -110,6 +147,10 @@ const Register = () => {
                 <Button type="submit" colorScheme="blue" mt={4}>
                     Submit
                 </Button>
+                <br />
+                <Link href="/student-login" color="blue.500" fontWeight="bold">
+                    Already have and account. Sign in here !!
+                </Link>
             </form>
         </VStack>
     )

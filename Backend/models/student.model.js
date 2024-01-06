@@ -9,6 +9,7 @@ const studentSchema = new Schema({
     grade: { type: String },
     language: { type: String },
     role: { type: String, default: 'student' },
+    subjectType: { type: [String], required: true }
 });
 
 const Student = mongoose.model('Student', studentSchema);

@@ -14,7 +14,7 @@ const tutorSchema = new Schema({
 
 const tutorAvailabilitySchema = new mongoose.Schema({
     tutorId: { type: String, required: true },
-    lastPingTime: { type: Date, default: new Date() },
+    lastPingTime: { type: Date },
 });
 
 const TutorAvailablity = mongoose.model("TutorAvailablity", tutorAvailabilitySchema);

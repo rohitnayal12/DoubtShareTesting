@@ -1,0 +1,120 @@
+import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
+import {
+    FormControl, Heading,
+    FormLabel,
+    Input,
+    Select,
+    Button,
+    Link,
+    VStack,
+} from '@chakra-ui/react';
+
+
+const StudentLogin = () => {
+    const SERVER_URL = "http://localhost:3300";
+    const navigate = useNavigate();
+
+
+    const [formData, setFormData] = useState({
+
+        email: '',
+        password: '',
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({ ...prevData, [name]: value }));
+    };
+
+
+
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            // Handle form submission logic here
+            console.log('Form Data:', formData);
+            const response = await fetch(`${SERVER_URL}/login/student`, {
+                method: 'POST',
+                mode: "cors",
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                const data = await response.json(); // Parse the JSON in the response
+                console.log('Success:', data);
+                localStorage.setItem("token", data.token);
+                localStorage.setItem("studentId", data.studentId)
+                localStorage.setItem('studentDetails', JSON.stringify(data.studentDetails))
+
+                alert(data.message);
+
+                setTimeout(() => {
+                    navigate("/student/dashboard")
+                }, 3000);
+
+            } else {
+                const data = await response.json(); // Parse the JSON in the response
+                alert(data.message);
+                // throw new Error(`HTTP error! Status: ${response.status}`);
+
+            }
+
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
+
+    };
+
+
+
+    return (
+        <VStack spacing={4} align="stretch" maxW={400} m={"auto"}>
+            <form onSubmit={handleSubmit}>
+
+
+                <FormControl isRequired>
+                    <FormLabel>Email</FormLabel>
+                    <Input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        value={formData.email}
+                        onChange={handleChange}
+                    />
+                </FormControl>
+
+                <FormControl isRequired>
+                    <FormLabel>Password</FormLabel>
+                    <Input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        value={formData.password}
+                        onChange={handleChange}
+                    />
+                </FormControl>
+
+                <Button type="submit" colorScheme="blue" mt={4}>
+                    Submit
+                </Button>
+                <br />
+
+                <Link href="/student-register" color="blue.500" fontWeight="bold">
+                    Don't have an account. Sign up here !!
+                </Link>
+
+            </form>
+        </VStack>
+    )
+}
+
+export default StudentLogin;

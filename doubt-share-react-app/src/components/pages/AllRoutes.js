@@ -5,7 +5,10 @@ import Student from './Student';
 import Tutor from './Tutor';
 import Register from '../Register';
 import TutorRegister from '../TutorRegister';
-
+import TutorSignin from '../TutorSignin';
+import StudentLogin from '../StudentLogin';
+import StudentDashboard from './StudentDashboard';
+import TutorDashboard from './TutorDashboard';
 
 const AllRoutes = () => {
     return (
@@ -16,11 +19,16 @@ const AllRoutes = () => {
 
                 {/* Make this student login element */}
                 <Route path="/student" element={<Student />} />
-                <Route path='/register' element={<Register />} />
+                <Route path='/student-register' element={<Register />} />
+                <Route path='/student-login' element={<StudentLogin />} />
+
+                <Route path='/student/dashboard' element={<StudentDashboard />} />
 
 
                 <Route path='/tutor' element={<Tutor />} />
+                <Route path="/tutor-login" element={<TutorSignin />} />
                 <Route path='/tutor-register' element={<TutorRegister />} />
+                <Route path='/tutor/dashboard' element={<TutorDashboard />} />
 
             </Routes>
 
@@ -29,4 +37,4 @@ const AllRoutes = () => {
     )
 }
 
-export default AllRoutes
+export default AllRoutes;
