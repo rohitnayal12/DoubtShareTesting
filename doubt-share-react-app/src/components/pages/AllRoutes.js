@@ -9,6 +9,10 @@ import TutorSignin from '../TutorSignin';
 import StudentLogin from '../StudentLogin';
 import StudentDashboard from './StudentDashboard';
 import TutorDashboard from './TutorDashboard';
+import Chat from './Chat';
+import TutorChat from './TutorChat';
+import AllQueries from './AllQueries';
+import ViewChat from './ViewChat';
 
 const AllRoutes = () => {
     return (
@@ -30,6 +34,13 @@ const AllRoutes = () => {
                 <Route path='/tutor-register' element={<TutorRegister />} />
                 <Route path='/tutor/dashboard' element={<TutorDashboard />} />
 
+                <Route path='/student-chat/:roomName/:conversationId' element={<Chat />} />
+                <Route path='/tutor-chat/:roomName/:conversationId' element={<TutorChat />} />
+
+
+                <Route path="/allQueries" element={<AllQueries />} />
+
+                <Route path="/view-chat/:conversationId" element={<ViewChat />} ></Route>
             </Routes>
 
 

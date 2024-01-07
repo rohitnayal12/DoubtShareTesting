@@ -3,6 +3,7 @@ import { Heading } from "@chakra-ui/react"
 import { initializeSocket } from '../../Socket'
 import TutorTable from '../TutorTable';
 import NoTutorAlert from '../NoTutorAlert';
+import NavBar from '../NavBar';
 
 
 const StudentDashboard = () => {
@@ -79,7 +80,7 @@ const StudentDashboard = () => {
             // Disconnect the socket when the component unmounts
             socket.off("allAvailableTutor", pollingFunction);
             socket.disconnect();
-            socket = null;
+            // socket = null;
         };
 
     }, []);
@@ -88,9 +89,7 @@ const StudentDashboard = () => {
 
     return (
         <div>
-            <Heading size="1xl">
-                Student DashBoard
-            </Heading>
+            <NavBar />
 
             {tutorData.length ? <TutorTable tutorData={tutorData} socket={socket} studentDetails={studentDetails} /> : <NoTutorAlert />}
 

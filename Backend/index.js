@@ -19,11 +19,15 @@ const io = new Server(server, {
 
 initializeTutorSocket(io); // Initialize tutor socket
 
+
+//  All middleware route
 const { dbConnection } = require("./config/db");
 const { studentRoute } = require("./routes/student.route");
 const { tutorRoute } = require("./routes/tutor.route");
 const { TutorAvailablity } = require("./models/tutor.model");
 const { cronFunction, tutorValue } = require("./helpers/handleCron");
+const { queryRoute } = require("./routes/query.route");
+const { conversationRoute } = require("./routes/conversation");
 const PORT = process.env.PORT || 3300;
 
 // Starting the CRON Function here 
@@ -35,7 +39,9 @@ app.use(express.json());
 
 // Router Middleware
 app.use("/", studentRoute);
-app.use("/", tutorRoute)
+app.use("/", tutorRoute);
+app.use("/", queryRoute);
+app.use("/", conversationRoute)
 
 
 app.get('/', (req, res) => {

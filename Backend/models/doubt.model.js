@@ -5,7 +5,8 @@ const doubtQuerySchema = new mongoose.Schema({
     tutorId: { type: String, required: true },
     subjectType: { type: [String], required: true },
     status: { type: String, enum: ['pending', 'accept', 'reject'], default: 'pending' },
-    timestamp: { type: Date },
+    timeStamp: { type: Date, required: true },
+    uniqueKey: { type: String, required: true },
 }, { versionKey: false });
 
 const DoubtQuery = mongoose.model('DoubtQuery', doubtQuerySchema);

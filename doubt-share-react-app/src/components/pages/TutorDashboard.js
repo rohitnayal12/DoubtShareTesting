@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { Heading, Button, Box } from "@chakra-ui/react"
+import {
+    Heading, Button, Box, Alert,
+    AlertIcon,
+    AlertTitle,
+    AlertDescription,
+} from "@chakra-ui/react"
 import { initializeSocket } from '../../Socket';
+import { useNavigate } from "react-router-dom";
+import TutorNavBar from '../TutorNavBar';
 
 const TutorDashboard = () => {
 
@@ -8,6 +15,9 @@ const TutorDashboard = () => {
     const token = localStorage.getItem("token");
 
     const [activeQuery, setActiveQuery] = useState(null);
+    const [conversationId, setConversationId] = useState("");
+    const navigate = useNavigate();
+
 
     let socket = initializeSocket();
 
@@ -28,7 +38,13 @@ const TutorDashboard = () => {
         socket.on("requestQuery", (data) => {
             setActiveQuery(data);
             console.log("Request Query : ", data)
+
         })
+
+        setTimeout(() => {
+            setActiveQuery(null);
+        }, 60 * 1000)
+
 
         if (socket.connected) {
             socket.disconnect();
@@ -41,15 +57,22 @@ const TutorDashboard = () => {
             socket = null;
         };
 
-
-
     }, [tutorId]);
 
 
     const handleAccept = () => {
-        // Handle accept logic, create a room, etc.
-        console.log(`Accepted query with tutorId: ${activeQuery.tutorId}`);
-        // Emit event to create a room or handle it according to your needs
+        // query acceopt
+        socket.emit("acceptQuery", activeQuery);
+
+        // Koin the room here
+        const roomName = `${activeQuery.tutorId}-${activeQuery.studentId}`;
+        socket.emit("joinRoom", roomName);
+
+        // Get ConversationId 
+        socket.on("getConversationId", (data) => {
+            navigate(`/tutor-chat/${roomName}/${data.conversationId}`)
+            setConversationId(data.conversationId)
+        })
 
         // Clear the active query
         setActiveQuery(null);
@@ -61,6 +84,7 @@ const TutorDashboard = () => {
         // Emit event to handle rejection on the server or handle it according to your needs
 
         // Clear the active query
+        socket.emit("rejectQuery", activeQuery)
         setActiveQuery(null);
     };
 
@@ -68,11 +92,9 @@ const TutorDashboard = () => {
 
     return (
         <div>
-            <Heading size="1xl">
-                Tutor DashBoard
-            </Heading>
+            <TutorNavBar />
 
-            {activeQuery && (
+            {activeQuery ?
                 <Box p={4} borderWidth="1px" borderRadius="md" my={2}>
                     <div>
                         <strong>Student ID:</strong> {activeQuery.studentId}
@@ -92,11 +114,20 @@ const TutorDashboard = () => {
                     <Button colorScheme="red" ml={2} onClick={handleReject}>
                         Reject
                     </Button>
-                </Box>
-            )}
+                </Box> : <Alert status='error' mt={10}>
+                    <AlertIcon />
+                    <AlertTitle>No Doubt Queries !!!</AlertTitle>
+                    <AlertDescription>PLease stay active.</AlertDescription>
+                </Alert>
+            }
 
         </div>
     )
 }
 
-export default TutorDashboard
+export default TutorDashboard;
+
+
+
+
+
